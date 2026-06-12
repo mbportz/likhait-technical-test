@@ -6,6 +6,7 @@ import React from "react";
 import { Category, ExpenseFormData } from "../types";
 import { TextField, SelectBox, Button } from "../vibes";
 import { useExpenseForm } from "../hooks/useExpenseForm";
+import { getTodayDateString } from "../utils/expenseUtils";
 
 interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
@@ -84,6 +85,7 @@ export function ExpenseForm({
         label="Date"
         type="date"
         value={formData.date}
+        max={getTodayDateString()}
         onChange={(e) => handleChange("date", e.target.value)}
         error={errors.date}
         fullWidth
