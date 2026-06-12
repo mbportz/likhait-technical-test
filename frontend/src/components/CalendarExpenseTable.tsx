@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from "react";
-import { Expense, ExpenseFormData } from "../types";
+import { Expense, ExpenseFormData, Category } from "../types";
 import { formatCurrency, formatDate } from "../utils/expenseUtils";
 import { getCategoryEmoji } from "../constants/categoryEmojis";
 import { COLORS } from "../constants/colors";
@@ -13,6 +13,7 @@ import { deleteExpense, updateExpense } from "../services/api";
 
 interface CalendarExpenseTableProps {
   expenses: Expense[];
+  categories: Category[];
   onExpenseUpdated: () => void;
 }
 
@@ -20,6 +21,7 @@ const ITEMS_PER_PAGE = 10;
 
 export function CalendarExpenseTable({
   expenses,
+  categories,
   onExpenseUpdated,
 }: CalendarExpenseTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,7 +61,15 @@ export function CalendarExpenseTable({
   const handleUpdate = async (data: ExpenseFormData) => {
     if (!editingExpense) return;
     try {
-      await updateExpense(editingExpense.id, data);
+      const category = categories.find(
+        (expenseCategory) => expenseCategory.name === data.category,
+      );
+
+      if (!category) {
+        throw new Error("Selected category not found");
+      }
+
+      await updateExpense(editingExpense.id, data, category.id);
       setIsEditModalOpen(false);
       setEditingExpense(null);
       onExpenseUpdated();
@@ -188,6 +198,7 @@ export function CalendarExpenseTable({
       >
         {editingExpense && (
           <ExpenseForm
+            categories={categories}
             initialData={{
               amount: editingExpense.amount.toString(),
               description: editingExpense.description,

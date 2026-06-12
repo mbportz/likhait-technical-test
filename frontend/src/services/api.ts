@@ -36,9 +36,7 @@ export async function getExpenses(
 /**
  * Fetch all categories
  */
-export async function fetchCategories(): Promise<
-  Array<{ id: number; name: string }>
-> {
+export async function fetchCategories(): Promise<Category[]> {
   const response = await fetch(`${API_BASE_URL}/categories`);
   if (!response.ok) {
     throw new Error("Failed to fetch categories");
@@ -49,15 +47,14 @@ export async function fetchCategories(): Promise<
 /**
  * Create a new expense
  */
-export async function createExpense(data: ExpenseFormData): Promise<Expense> {
-  // Convert category name to category_id
-  const categories = await fetchCategories();
-  const category = categories.find((c) => c.name === data.category);
-
+export async function createExpense(
+  data: ExpenseFormData,
+  categoryId: number,
+): Promise<Expense> {
   const expenseData = {
     description: data.description,
     amount: data.amount,
-    category_id: category?.id,
+    category_id: categoryId,
     date: data.date,
   };
 
@@ -81,14 +78,22 @@ export async function createExpense(data: ExpenseFormData): Promise<Expense> {
  */
 export async function updateExpense(
   id: number,
-  data: Partial<ExpenseFormData>,
+  data: ExpenseFormData,
+  categoryId: number,
 ): Promise<Expense> {
+  const expenseData = {
+    description: data.description,
+    amount: data.amount,
+    category_id: categoryId,
+    date: data.date,
+  };
+
   const response = await fetch(`${API_BASE_URL}/expenses/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ expense: data }),
+    body: JSON.stringify({ expense: expenseData }),
   });
 
   if (!response.ok) {

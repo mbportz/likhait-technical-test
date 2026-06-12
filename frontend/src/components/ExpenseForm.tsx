@@ -3,7 +3,7 @@
  */
 
 import React from "react";
-import { ExpenseFormData } from "../types";
+import { Category, ExpenseFormData } from "../types";
 import { TextField, SelectBox, Button } from "../vibes";
 import { useExpenseForm } from "../hooks/useExpenseForm";
 
@@ -12,7 +12,7 @@ interface ExpenseFormProps {
   onSubmit: (data: ExpenseFormData) => Promise<void>;
   onCancel?: () => void;
   submitLabel?: string;
-  categories: Array<{ id: number; name: string }>
+  categories: Category[];
 }
 
 export function ExpenseForm({
@@ -41,8 +41,8 @@ export function ExpenseForm({
   };
 
   const categoryOptions = categories.map((category) => ({
-    value: category,
-    label: category,
+    value: category.name,
+    label: category.name,
   }));
 
   return (
