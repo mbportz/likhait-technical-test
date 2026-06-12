@@ -4,7 +4,11 @@
 
 import { useState } from "react";
 import { ExpenseFormData } from "../types";
-import { formatDate } from "../utils/expenseUtils";
+import {
+  FUTURE_DATE_ERROR,
+  getTodayDateString,
+  isFutureDate,
+} from "../utils/expenseUtils";
 
 interface UseExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
@@ -16,7 +20,7 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
     amount: initialData?.amount || "",
     description: initialData?.description || "",
     category: initialData?.category || "",
-    date: initialData?.date || formatDate(new Date()),
+    date: initialData?.date || getTodayDateString(),
   });
 
   const [errors, setErrors] = useState<Partial<ExpenseFormData>>({});
@@ -47,6 +51,8 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
 
     if (!formData.date) {
       newErrors.date = "Date is required";
+    } else if (isFutureDate(formData.date)) {
+      newErrors.date = FUTURE_DATE_ERROR;
     }
 
     setErrors(newErrors);
@@ -68,7 +74,7 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
         amount: "",
         description: "",
         category: "",
-        date: formatDate(new Date()),
+        date: getTodayDateString(),
       });
       setErrors({});
     } catch (error) {
@@ -83,7 +89,7 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
       amount: initialData?.amount || "",
       description: initialData?.description || "",
       category: initialData?.category || "",
-      date: initialData?.date || formatDate(new Date()),
+      date: initialData?.date || getTodayDateString(),
     });
     setErrors({});
   };

@@ -28,6 +28,23 @@ export function formatDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+export const FUTURE_DATE_ERROR =
+  "Expense date cannot be in the future. Please select today or an earlier date.";
+
+/**
+ * Returns today's date as YYYY-MM-DD for date input constraints.
+ */
+export function getTodayDateString(): string {
+  return formatDate(new Date());
+}
+
+/**
+ * Returns true when dateString (YYYY-MM-DD) is after today.
+ */
+export function isFutureDate(dateString: string): boolean {
+  return dateString > getTodayDateString();
+}
+
 /**
  * Get days in month
  */
